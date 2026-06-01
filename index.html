@@ -321,6 +321,81 @@
   }
   .btn.outline-sm:hover { background: var(--ink); color: var(--cream); }
 
+  /* ---------- Product Options (dropdowns) ---------- */
+  .product-options { display: flex; flex-direction: column; gap: 10px; }
+  .field { position: relative; }
+  .field select {
+    appearance: none; -webkit-appearance: none;
+    width: 100%;
+    padding: 12px 38px 12px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink);
+    background: transparent;
+    border: 1.5px solid var(--line);
+    border-radius: 0;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+  .field select:hover, .field select:focus { border-color: var(--ink); outline: none; }
+  .field::after {
+    content: '';
+    position: absolute; right: 16px; top: 50%;
+    width: 7px; height: 7px;
+    border-right: 1.5px solid var(--ink);
+    border-bottom: 1.5px solid var(--ink);
+    transform: translateY(-65%) rotate(45deg);
+    pointer-events: none;
+  }
+  .product-price-live {
+    display: flex; align-items: baseline; justify-content: space-between;
+    font-size: 13.5px;
+  }
+  .product-price-live .amt { font-weight: 600; font-size: 18px; }
+  .product-price-live .note { color: var(--muted); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+  /* ---------- Checkout Modal ---------- */
+  .checkout-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(18, 12, 6, 0.55);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: none; align-items: flex-start; justify-content: center;
+    padding: 40px 20px; overflow-y: auto;
+  }
+  .checkout-overlay.open { display: flex; }
+  .checkout-modal {
+    background: var(--cream-2);
+    width: 100%; max-width: 540px;
+    border-radius: 8px;
+    box-shadow: 0 40px 80px -20px rgba(24, 17, 9, 0.5);
+    position: relative;
+    min-height: 200px;
+  }
+  .checkout-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 26px;
+    border-bottom: 1px solid var(--line);
+  }
+  .checkout-head h3 {
+    font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 26px; letter-spacing: -0.005em;
+  }
+  .checkout-head h3 em { color: var(--orange); font-style: italic; }
+  .checkout-close {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1.5px solid var(--line); font-size: 16px; line-height: 1;
+    transition: border-color 0.2s ease;
+  }
+  .checkout-close:hover { border-color: var(--ink); }
+  #checkout-element { padding: 8px 14px 18px; }
+  .checkout-loading, .checkout-error {
+    padding: 60px 26px; text-align: center; color: var(--muted); font-size: 14px;
+  }
+  .checkout-error { color: var(--orange); }
+
   /* ---------- Small Batch ---------- */
   .batch {
     background: var(--sand);
@@ -574,7 +649,7 @@
 
   <div class="products">
     <!-- Glow -->
-    <article class="product">
+    <article class="product" data-sku="glow">
       <div class="product-art glow">
         <span class="badge bestseller">Bestseller</span>
         <img src="assets/glow.jpg" alt="Unfiltered Glow bottle" loading="lazy">
@@ -584,14 +659,30 @@
         <h3 class="product-name">Unfiltered <em>Glow</em></h3>
         <div class="product-row">
           <div class="ing">Apple · Mint · Turmeric · Lime</div>
-          <div class="price">$36<small>/ 6-pack</small></div>
         </div>
-        <button class="btn outline-sm">Add to Bag</button>
+        <div class="product-options">
+          <div class="field">
+            <select class="opt-pack" aria-label="Pack size">
+              <option value="6">6-pack</option>
+              <option value="12">12-pack</option>
+              <option value="24">24-pack</option>
+            </select>
+          </div>
+          <div class="field">
+            <select class="opt-plan" aria-label="Purchase plan">
+              <option value="once">One-time</option>
+              <option value="biweekly">Subscribe — every 2 weeks (save 15%)</option>
+              <option value="monthly">Subscribe — monthly (save 10%)</option>
+            </select>
+          </div>
+        </div>
+        <div class="product-price-live"><span class="amt">$36.00</span><span class="note">6-pack · One-time</span></div>
+        <button class="btn outline-sm buy-btn">Add to Bag</button>
       </div>
     </article>
 
     <!-- Immunity -->
-    <article class="product">
+    <article class="product" data-sku="immunity">
       <div class="product-art imm">
         <span class="badge new">New</span>
         <img src="assets/immunity.jpg" alt="Unfiltered Immunity Boost bottle" loading="lazy">
@@ -601,14 +692,30 @@
         <h3 class="product-name">Unfiltered <em>Immunity</em> Boost</h3>
         <div class="product-row">
           <div class="ing">Ginger · Citrus · Cayenne</div>
-          <div class="price">$36<small>/ 6-pack</small></div>
         </div>
-        <button class="btn outline-sm">Add to Bag</button>
+        <div class="product-options">
+          <div class="field">
+            <select class="opt-pack" aria-label="Pack size">
+              <option value="6">6-pack</option>
+              <option value="12">12-pack</option>
+              <option value="24">24-pack</option>
+            </select>
+          </div>
+          <div class="field">
+            <select class="opt-plan" aria-label="Purchase plan">
+              <option value="once">One-time</option>
+              <option value="biweekly">Subscribe — every 2 weeks (save 15%)</option>
+              <option value="monthly">Subscribe — monthly (save 10%)</option>
+            </select>
+          </div>
+        </div>
+        <div class="product-price-live"><span class="amt">$36.00</span><span class="note">6-pack · One-time</span></div>
+        <button class="btn outline-sm buy-btn">Add to Bag</button>
       </div>
     </article>
 
     <!-- Citrus Fire -->
-    <article class="product">
+    <article class="product" data-sku="citrus">
       <div class="product-art citrus">
         <span class="badge returns">Returns</span>
         <img src="assets/citrus.jpg" alt="Unfiltered Citrus Fire bottle" loading="lazy">
@@ -618,14 +725,30 @@
         <h3 class="product-name">Unfiltered <em>Citrus</em> Fire</h3>
         <div class="product-row">
           <div class="ing">Lemon · Honey · Ginger</div>
-          <div class="price">$36<small>/ 6-pack</small></div>
         </div>
-        <button class="btn outline-sm">Add to Bag</button>
+        <div class="product-options">
+          <div class="field">
+            <select class="opt-pack" aria-label="Pack size">
+              <option value="6">6-pack</option>
+              <option value="12">12-pack</option>
+              <option value="24">24-pack</option>
+            </select>
+          </div>
+          <div class="field">
+            <select class="opt-plan" aria-label="Purchase plan">
+              <option value="once">One-time</option>
+              <option value="biweekly">Subscribe — every 2 weeks (save 15%)</option>
+              <option value="monthly">Subscribe — monthly (save 10%)</option>
+            </select>
+          </div>
+        </div>
+        <div class="product-price-live"><span class="amt">$36.00</span><span class="note">6-pack · One-time</span></div>
+        <button class="btn outline-sm buy-btn">Add to Bag</button>
       </div>
     </article>
 
     <!-- Reset -->
-    <article class="product">
+    <article class="product" data-sku="reset">
       <div class="product-art reset">
         <span class="badge limited">Limited</span>
         <img src="assets/reset.jpg" alt="Unfiltered Reset bottle" loading="lazy">
@@ -635,9 +758,25 @@
         <h3 class="product-name">Unfiltered <em>Reset</em></h3>
         <div class="product-row">
           <div class="ing">Beet · Tart Cherry · Lemon</div>
-          <div class="price">$36<small>/ 6-pack</small></div>
         </div>
-        <button class="btn outline-sm">Add to Bag</button>
+        <div class="product-options">
+          <div class="field">
+            <select class="opt-pack" aria-label="Pack size">
+              <option value="6">6-pack</option>
+              <option value="12">12-pack</option>
+              <option value="24">24-pack</option>
+            </select>
+          </div>
+          <div class="field">
+            <select class="opt-plan" aria-label="Purchase plan">
+              <option value="once">One-time</option>
+              <option value="biweekly">Subscribe — every 2 weeks (save 15%)</option>
+              <option value="monthly">Subscribe — monthly (save 10%)</option>
+            </select>
+          </div>
+        </div>
+        <div class="product-price-live"><span class="amt">$36.00</span><span class="note">6-pack · One-time</span></div>
+        <button class="btn outline-sm buy-btn">Add to Bag</button>
       </div>
     </article>
   </div>
@@ -732,6 +871,131 @@
     </div>
   </div>
 </footer>
+
+<!-- ============ CHECKOUT MODAL (Stripe Embedded Checkout — no redirect) ============ -->
+<div class="checkout-overlay" id="checkoutOverlay" role="dialog" aria-modal="true" aria-label="Checkout">
+  <div class="checkout-modal">
+    <div class="checkout-head">
+      <h3 id="checkoutTitle">Your <em>order</em></h3>
+      <button class="checkout-close" id="checkoutClose" aria-label="Close checkout">&times;</button>
+    </div>
+    <div id="checkout-element">
+      <div class="checkout-loading" id="checkoutLoading">Preparing secure checkout…</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+(function () {
+  // Pricing mirror of api/_catalog.js — used only to update the on-card price live.
+  // The server is the source of truth for what actually gets charged.
+  var PACKS = { '6': 3600, '12': 6600, '24': 12000 };
+  var PLANS = {
+    once:     { label: 'One-time',      discount: 0,    note: 'One-time' },
+    biweekly: { label: 'Every 2 weeks', discount: 0.15, note: 'Every 2 wks' },
+    monthly:  { label: 'Every month',   discount: 0.10, note: 'Monthly' }
+  };
+  var PACK_LABEL = { '6': '6-pack', '12': '12-pack', '24': '24-pack' };
+
+  function money(cents) { return '$' + (cents / 100).toFixed(2); }
+
+  // --- Live price on each product card ---
+  document.querySelectorAll('.product').forEach(function (card) {
+    var packSel = card.querySelector('.opt-pack');
+    var planSel = card.querySelector('.opt-plan');
+    var amtEl = card.querySelector('.product-price-live .amt');
+    var noteEl = card.querySelector('.product-price-live .note');
+    function update() {
+      var plan = PLANS[planSel.value];
+      var unit = Math.round(PACKS[packSel.value] * (1 - plan.discount));
+      amtEl.textContent = money(unit);
+      noteEl.textContent = PACK_LABEL[packSel.value] + ' · ' + plan.note;
+    }
+    packSel.addEventListener('change', update);
+    planSel.addEventListener('change', update);
+    update();
+  });
+
+  // --- Checkout modal + Stripe Embedded Checkout ---
+  var overlay = document.getElementById('checkoutOverlay');
+  var closeBtn = document.getElementById('checkoutClose');
+  var titleEl = document.getElementById('checkoutTitle');
+  var container = document.getElementById('checkout-element');
+  var stripePromise = null;
+  var currentCheckout = null;
+
+  function getStripe() {
+    if (stripePromise) return stripePromise;
+    stripePromise = fetch('/api/config')
+      .then(function (r) { return r.json(); })
+      .then(function (cfg) {
+        if (!cfg.publishableKey) throw new Error('Stripe publishable key is not configured.');
+        return Stripe(cfg.publishableKey);
+      });
+    return stripePromise;
+  }
+
+  function resetModal() {
+    if (currentCheckout) { try { currentCheckout.destroy(); } catch (e) {} currentCheckout = null; }
+    container.innerHTML = '<div class="checkout-loading">Preparing secure checkout…</div>';
+  }
+
+  function openCheckout(sku, pack, plan, name) {
+    titleEl.innerHTML = name + ' <em>checkout</em>';
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    resetModal();
+
+    getStripe()
+      .then(function (stripe) {
+        return fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sku: sku, pack: pack, plan: plan })
+        })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (!res.ok || !res.d.clientSecret) {
+            throw new Error(res.d.error || 'Could not start checkout.');
+          }
+          container.innerHTML = '';
+          return stripe.initEmbeddedCheckout({ clientSecret: res.d.clientSecret });
+        });
+      })
+      .then(function (checkout) {
+        currentCheckout = checkout;
+        checkout.mount('#checkout-element');
+      })
+      .catch(function (err) {
+        container.innerHTML = '<div class="checkout-error">' +
+          (err.message || 'Checkout is unavailable right now.') +
+          '<br><br>Make sure STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY are set in your Vercel environment.</div>';
+      });
+  }
+
+  function closeCheckout() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    resetModal();
+  }
+
+  document.querySelectorAll('.product .buy-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var card = btn.closest('.product');
+      var sku = card.getAttribute('data-sku');
+      var pack = card.querySelector('.opt-pack').value;
+      var plan = card.querySelector('.opt-plan').value;
+      var name = card.querySelector('.product-name').textContent.trim();
+      openCheckout(sku, pack, plan, name);
+    });
+  });
+
+  closeBtn.addEventListener('click', closeCheckout);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closeCheckout(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('open')) closeCheckout(); });
+})();
+</script>
 
 </body>
 </html>
