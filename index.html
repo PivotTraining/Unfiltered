@@ -734,11 +734,11 @@
     <div class="hero-oval"></div>
     <div class="hero-text">
       <h1>
-        <span class="ing">Real</span>
-        <span class="ing">ingredients.</span>
-        <span class="nf">No filter.</span>
+        <span class="ing" data-cms="settings.heroLine1">Real</span>
+        <span class="ing" data-cms="settings.heroLine2">ingredients.</span>
+        <span class="nf" data-cms="settings.heroLine3">No filter.</span>
       </h1>
-      <p>Cold-pressed wellness shots built on whole-food botanicals. Apples, ginger, turmeric, mint. Powered by what works, no fillers, no flash. Delivered fresh to your door.</p>
+      <p data-cms="settings.heroLede">Cold-pressed wellness shots built on whole-food botanicals. Apples, ginger, turmeric, mint. Powered by what works, no fillers, no flash. Delivered fresh to your door.</p>
       <div class="hero-ctas">
         <a class="btn" href="#shop">Shop the Shots</a>
         <a class="btn outline" href="#sub">Subscribe &amp; Save</a>
@@ -959,7 +959,7 @@
 <section class="section" id="faq">
   <div class="section-label">Frequently asked</div>
   <h2 class="section-title">Honest <em>answers</em>.</h2>
-  <div class="faq">
+  <div class="faq" data-cms-list="faqs">
     <details><summary>How are they shipped?</summary><p>Cold-packed via 1–2 day carrier. We press, bottle, and ship the morning your order goes out.</p></details>
     <details><summary>How long do shots last?</summary><p>14 days refrigerated. Freeze any you won't drink in the first week — they thaw fine.</p></details>
     <details><summary>Can I skip or cancel a subscription?</summary><p>Anytime, from your Account. Click the Account button up top to manage your plan.</p></details>
@@ -1045,6 +1045,7 @@
 </div>
 
 <script src="https://js.stripe.com/v3/"></script>
+<script src="/assets/cms.js" defer></script>
 <script>
 (function () {
   // Pricing mirror of api/_catalog.js — used only to update the on-card price live.
