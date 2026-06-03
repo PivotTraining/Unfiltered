@@ -357,6 +357,18 @@
   .product-price-live .amt { font-weight: 600; font-size: 18px; }
   .product-price-live .note { color: var(--muted); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
 
+  /* Stock badges (top-right of product art) */
+  .stock-badge {
+    position: absolute; top: 20px; right: 20px;
+    font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+    padding: 6px 12px; color: white; font-weight: 600;
+    display: none;
+  }
+  .stock-badge.low { background: var(--gold); color: var(--ink); display: inline-block; }
+  .stock-badge.sold_out { background: var(--ink); display: inline-block; }
+  .product.sold-out .buy-btn { opacity: 0.4; pointer-events: none; }
+  .product.sold-out .product-options { opacity: 0.5; pointer-events: none; }
+
   /* ---------- Checkout Modal ---------- */
   .checkout-overlay {
     position: fixed; inset: 0; z-index: 1000;
@@ -652,6 +664,7 @@
     <article class="product" data-sku="glow">
       <div class="product-art glow">
         <span class="badge bestseller">Bestseller</span>
+        <span class="stock-badge"></span>
         <img src="assets/glow.jpg" alt="Unfiltered Glow bottle" loading="lazy">
       </div>
       <div class="product-info">
@@ -685,6 +698,7 @@
     <article class="product" data-sku="immunity">
       <div class="product-art imm">
         <span class="badge new">New</span>
+        <span class="stock-badge"></span>
         <img src="assets/immunity.jpg" alt="Unfiltered Immunity Boost bottle" loading="lazy">
       </div>
       <div class="product-info">
@@ -718,6 +732,7 @@
     <article class="product" data-sku="citrus">
       <div class="product-art citrus">
         <span class="badge returns">Returns</span>
+        <span class="stock-badge"></span>
         <img src="assets/citrus.jpg" alt="Unfiltered Citrus Fire bottle" loading="lazy">
       </div>
       <div class="product-info">
@@ -751,6 +766,7 @@
     <article class="product" data-sku="reset">
       <div class="product-art reset">
         <span class="badge limited">Limited</span>
+        <span class="stock-badge"></span>
         <img src="assets/reset.jpg" alt="Unfiltered Reset bottle" loading="lazy">
       </div>
       <div class="product-info">
@@ -899,6 +915,25 @@
   var PACK_LABEL = { '6': '6-pack', '12': '12-pack', '24': '24-pack' };
 
   function money(cents) { return '$' + (cents / 100).toFixed(2); }
+
+  // --- Stock status (badges + sold-out) ---
+  fetch('/api/stock').then(function (r) { return r.ok ? r.json() : null; }).then(function (snap) {
+    if (!snap) return;
+    document.querySelectorAll('.product').forEach(function (card) {
+      var sku = card.getAttribute('data-sku');
+      var s = snap[sku]; if (!s) return;
+      var badge = card.querySelector('.stock-badge');
+      if (s.status === 'sold_out') {
+        card.classList.add('sold-out');
+        badge.className = 'stock-badge sold_out';
+        badge.textContent = 'Sold Out';
+        var btn = card.querySelector('.buy-btn'); if (btn) btn.textContent = 'Sold Out';
+      } else if (s.status === 'low') {
+        badge.className = 'stock-badge low';
+        badge.textContent = 'Only ' + s.stock + ' left';
+      }
+    });
+  }).catch(function () {});
 
   // --- Live price on each product card ---
   document.querySelectorAll('.product').forEach(function (card) {
