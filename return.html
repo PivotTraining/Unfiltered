@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Order confirmed — Unfiltered</title>
+<meta name="theme-color" content="#f1e7d0" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --cream:#f1e7d0; --ink:#181109; --ink-2:#2b2014; --muted:#5c4e3b; --orange:#b73e1a; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--cream);color:var(--ink);font-family:'Inter',-apple-system,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+  .card{max-width:520px}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:64px;line-height:1;letter-spacing:-0.01em;margin-bottom:16px}
+  h1 em{color:var(--orange);font-style:italic}
+  p{color:var(--ink-2);font-size:16px;margin-bottom:8px}
+  .email{font-weight:600}
+  .btn{display:inline-block;margin-top:28px;padding:16px 30px;font-size:11.5px;font-weight:500;letter-spacing:0.24em;text-transform:uppercase;border:1.5px solid var(--ink);background:var(--ink);color:var(--cream);text-decoration:none;transition:all .2s ease}
+  .btn:hover{background:transparent;color:var(--ink)}
+  .muted{color:var(--muted);font-size:13px;margin-top:20px}
+</style>
+</head>
+<body>
+  <div class="card" id="card">
+    <h1>One moment<em>…</em></h1>
+    <p>Confirming your order.</p>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    const card = document.getElementById('card');
+
+    function render(title, body, email) {
+      card.innerHTML =
+        '<h1>' + title + '</h1>' +
+        '<p>' + body + '</p>' +
+        (email ? '<p class="email">' + email + '</p>' : '') +
+        '<a class="btn" href="index.html">Back to shop</a>' +
+        '<p class="muted">Test mode — no real charge was made.</p>';
+    }
+
+    if (!sessionId) {
+      render('Hmm<em>.</em>', 'We could not find your order reference.');
+    } else {
+      fetch('/api/session-status?session_id=' + encodeURIComponent(sessionId))
+        .then(r => r.json())
+        .then(d => {
+          if (d.status === 'complete') {
+            render("You're <em>in</em>.", 'Your shots are pressed fresh and on the way. A receipt is headed to', d.email);
+          } else {
+            render('Payment <em>incomplete</em>.', 'It looks like checkout was not completed. Nothing was charged.');
+          }
+        })
+        .catch(() => render('Something <em>broke</em>.', 'We could not confirm your order. Please contact hello@unfiltered.shop.'));
+    }
+  </script>
+</body>
+</html>

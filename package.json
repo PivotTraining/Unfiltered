@@ -1,0 +1,9 @@
+{
+  "name": "unfiltered",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Unfiltered cold-pressed wellness shots storefront",
+  "dependencies": {
+    "stripe": "^17.5.0"
+  }
+}
