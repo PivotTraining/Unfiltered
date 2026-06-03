@@ -6,7 +6,7 @@
 <title>Unfiltered — Cold-Pressed Wellness Shots</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root {
     --cream: #f1e7d0;
@@ -67,22 +67,26 @@
   .topbar a, .topbar button { display: inline-flex; align-items: center; gap: 8px; }
   .topbar a:hover, .topbar button:hover { color: var(--orange); }
 
+  /* Brand wordmark: script "Un" + serif "filtered". Matches the supplied logo
+     (script + serif), minus the "SKINCARE" sub-line which was a sub-brand. */
   .brand {
-    display: inline-flex; align-items: center;
-    line-height: 1;
-    color: var(--ink);
-    text-decoration: none;
+    display: inline-flex; align-items: baseline;
+    line-height: 1; color: var(--ink); text-decoration: none;
+    white-space: nowrap;
   }
-  .brand-logo { height: 38px; width: auto; display: block; }
-  .brand-fallback {
-    display: none; /* shown only if logo.svg fails to load */
+  .brand-un {
+    font-family: 'Allura', cursive;
+    font-size: 52px; font-weight: 400;
+    line-height: 1; letter-spacing: -0.02em;
+    margin-right: -4px; transform: translateY(2px);
+  }
+  .brand-filtered {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 38px;
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    font-size: 36px; font-weight: 500; font-style: normal;
+    letter-spacing: -0.01em; line-height: 1;
   }
-  .brand-fallback .un { font-style: normal; }
-  .brand-fallback .filtered { font-style: italic; }
+  /* In the dark footer, mirror the supplied logo's soft-pink ink. */
+  .footer-brand .brand-un, .footer-brand .brand-filtered { color: #f5cbd6; }
 
   .icon { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.6; }
   .icon-bag { width: 16px; height: 16px; }
@@ -653,13 +657,7 @@
     <a href="#faq">FAQ</a>
   </div>
   <a href="#top" class="brand" aria-label="Unfiltered home">
-    <!-- Drop your logo file at /assets/logo.svg (or .png) — width ~120px, dark on transparent.
-         If the file is missing, we fall back to a styled wordmark so the site never breaks. -->
-    <img src="assets/logo.png" alt="Unfiltered Skincare" class="brand-logo"
-         onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex';" />
-    <span class="brand-fallback">
-      <span class="un">Un</span><span class="filtered">filtered</span>
-    </span>
+    <span class="brand-un">Un</span><span class="brand-filtered">filtered</span>
   </a>
   <div class="topbar-right">
     <button id="searchBtn" aria-label="Search products">
@@ -933,7 +931,7 @@
 <footer class="footer">
   <div class="footer-grid">
     <div>
-      <div class="footer-brand"><span class="un">Un</span><span class="filtered">filtered</span></div>
+      <div class="footer-brand"><span class="brand-un">Un</span><span class="brand-filtered">filtered</span></div>
       <p class="footer-tag">Pressed in Brooklyn.<br/>Shipped on ice.<br/>Real ingredients. No filter.</p>
     </div>
     <div>
