@@ -6,7 +6,7 @@
 <title>Unfiltered — Cold-Pressed Wellness Shots</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root {
     --cream: #f1e7d0;
@@ -46,13 +46,26 @@
   button { font: inherit; cursor: pointer; background: none; border: 0; color: inherit; }
   img, svg { display: block; max-width: 100%; }
 
-  /* ---------- Top Bar ---------- */
+  /* ---------- Masthead (single dark header: utility row + big logo + subnav) ----------
+     Background is pure black so the logo PNG's black canvas blends invisibly.
+     Sticks to the top as we scroll; logo shrinks by 15% once we leave the very top. */
+  .masthead {
+    background: #000;
+    color: var(--cream);
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    transition: padding .25s ease;
+  }
+  .masthead .brand-row {
+    transition: padding .25s ease;
+  }
   .topbar {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
     gap: 24px;
-    padding: 24px 56px 14px;
+    padding: 14px 56px 8px;
     font-size: 11.5px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -64,51 +77,67 @@
     align-items: center;
   }
   .topbar-right { justify-content: flex-end; }
-  .topbar a, .topbar button { display: inline-flex; align-items: center; gap: 8px; }
-  .topbar a:hover, .topbar button:hover { color: var(--orange); }
+  .topbar a, .topbar button { display: inline-flex; align-items: center; gap: 8px; color: var(--cream); }
+  .topbar a:hover, .topbar button:hover { color: var(--gold); }
 
+  /* Centered brand mark row */
+  .brand-row {
+    display: flex; justify-content: center; align-items: center;
+    padding: 12px 56px 18px;
+  }
+
+  /* Brand wordmark. Prefers the real PNG at /assets/logo.png; falls back to
+     a script "Un" + serif "filtered" text mark when the file is missing. */
   .brand {
+    display: inline-flex; align-items: center;
+    line-height: 1; color: var(--ink); text-decoration: none;
+    white-space: nowrap;
+  }
+  /* Fluid logo size: 120px on small phones up to 240px on desktop, no breakpoint jumps.
+     mix-blend-mode: lighten erases any residual non-pure-black pixels in the PNG so the
+     edges blend into the masthead regardless of small color drift. Once the masthead
+     gains the .scrolled class, the logo eases to 85% of its natural height. */
+  .brand-logo {
+    height: clamp(120px, 18vw, 240px);
+    width: auto;
+    display: block;
+    mix-blend-mode: lighten;
+    transition: height .25s ease;
+  }
+  .masthead.scrolled .brand-logo { height: clamp(102px, 15.3vw, 204px); }
+  .masthead.scrolled .brand-row { padding-top: 4px; padding-bottom: 10px; }
+  .brand-un {
+    font-family: 'Allura', cursive;
+    font-size: 52px; font-weight: 400;
+    line-height: 1; letter-spacing: -0.02em;
+    margin-right: -4px; transform: translateY(2px);
+  }
+  .brand-filtered {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 38px;
-    letter-spacing: -0.01em;
-    text-transform: none;
-    line-height: 1;
-    position: relative;
-    padding-right: 14px;
-    color: var(--ink);
-    font-weight: 500;
+    font-size: 36px; font-weight: 500; font-style: normal;
+    letter-spacing: -0.01em; line-height: 1;
   }
-  .brand .un { font-style: normal; }
-  .brand .filtered { font-style: italic; }
-  .brand sup {
-    font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    font-weight: 500;
-    position: absolute;
-    top: 6px;
-    right: 0;
-    letter-spacing: 0;
-  }
+  /* In the dark footer, mirror the supplied logo's soft-pink ink. */
+  .footer-brand .brand-un, .footer-brand .brand-filtered { color: #f5cbd6; }
 
   .icon { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.6; }
   .icon-bag { width: 16px; height: 16px; }
 
-  /* ---------- Sub Nav ---------- */
+  /* ---------- Sub Nav (lives inside the same dark masthead) ---------- */
   .subnav {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    align-items: center;
-    column-gap: 16px;
-    padding: 6px 56px 22px;
+    display: flex; flex-wrap: wrap;
+    justify-content: center; align-items: center; column-gap: 32px; row-gap: 8px;
+    padding: 8px 56px 18px;
     font-size: 11.5px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     font-weight: 500;
-    border-bottom: 1px solid var(--line);
+    color: var(--cream);
+    border-top: 1px solid rgba(241, 231, 208, 0.12);
   }
-  .subnav a { padding: 6px 0; line-height: 1.4; }
-  .subnav a.active { position: relative; }
-  .subnav a:hover { color: var(--orange); }
+  .subnav a { padding: 6px 0; line-height: 1.4; color: var(--cream); }
+  .subnav a.active { color: var(--gold); }
+  .subnav a:hover { color: var(--gold); }
 
   /* ---------- Hero ---------- */
   .hero {
@@ -357,6 +386,82 @@
   .product-price-live .amt { font-weight: 600; font-size: 18px; }
   .product-price-live .note { color: var(--muted); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
 
+  /* Stock badges (top-right of product art) */
+  .stock-badge {
+    position: absolute; top: 20px; right: 20px;
+    font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+    padding: 6px 12px; color: white; font-weight: 600;
+    display: none;
+  }
+  .stock-badge.low { background: var(--gold); color: var(--ink); display: inline-block; }
+  .stock-badge.sold_out { background: var(--ink); display: inline-block; }
+  .product.sold-out .buy-btn { opacity: 0.4; pointer-events: none; }
+  .product.sold-out .product-options { opacity: 0.5; pointer-events: none; }
+
+  /* ---------- FAQ ---------- */
+  .faq { max-width: 760px; margin: 0 auto; }
+  .faq details {
+    border-top: 1px solid var(--line);
+    padding: 22px 0;
+  }
+  .faq details:last-child { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    list-style: none; cursor: pointer;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500; font-size: 22px; letter-spacing: -0.005em;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after {
+    content: '+'; font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 300;
+    color: var(--orange); transition: transform .2s ease;
+  }
+  .faq details[open] summary::after { content: '–'; }
+  .faq p { color: var(--ink-2); margin-top: 12px; font-size: 15.5px; line-height: 1.65; }
+  .faq a { color: var(--orange); text-decoration: underline; }
+
+  /* ---------- Topbar utility modals (Search / Account) ---------- */
+  .util-overlay {
+    position: fixed; inset: 0; z-index: 900;
+    background: rgba(18,12,6,0.45);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: none; align-items: flex-start; justify-content: center;
+    padding: 80px 20px 20px;
+  }
+  .util-overlay.open { display: flex; }
+  .util-panel {
+    background: var(--cream-2); width: 100%; max-width: 520px;
+    border-radius: 8px; box-shadow: 0 30px 60px -20px rgba(24,17,9,0.4);
+    padding: 26px;
+  }
+  .util-panel h3 {
+    font-family: 'Cormorant Garamond', serif; font-weight: 500;
+    font-size: 28px; letter-spacing: -0.005em; margin-bottom: 16px;
+  }
+  .util-panel h3 em { color: var(--orange); font-style: italic; }
+  .util-panel input {
+    width: 100%; padding: 14px 16px; font: inherit; font-size: 15px;
+    background: transparent; color: var(--ink);
+    border: 1.5px solid var(--line); border-radius: 0; outline: none;
+    transition: border-color .15s ease;
+  }
+  .util-panel input:focus { border-color: var(--ink); }
+  .util-results { margin-top: 18px; }
+  .util-results a {
+    display: block; padding: 12px 0;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .util-results a:hover { color: var(--orange); }
+  .util-empty { color: var(--muted); font-size: 14px; margin-top: 14px; }
+  .util-close {
+    float: right; width: 32px; height: 32px; border-radius: 50%;
+    border: 1.5px solid var(--line); font-size: 16px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .util-close:hover { border-color: var(--ink); }
+  .product.search-hidden { display: none; }
+
   /* ---------- Checkout Modal ---------- */
   .checkout-overlay {
     position: fixed; inset: 0; z-index: 1000;
@@ -561,9 +666,10 @@
     .footer-grid { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 760px) {
-    .topbar { grid-template-columns: auto auto; padding: 16px 20px; }
+    .topbar { grid-template-columns: auto auto; padding: 12px 20px 4px; }
     .topbar-left { display: none; }
-    .subnav { display: none; }
+    .brand-row { padding: 6px 20px 14px; }
+    .subnav { padding: 8px 20px 14px; column-gap: 18px; font-size: 10px; }
     .hero, .section, .batch, .stories, .footer { padding-left: 20px; padding-right: 20px; padding-top: 70px; padding-bottom: 70px; }
     .hero-grid, .batch-grid { grid-template-columns: 1fr; gap: 40px; }
     .products, .story-grid { grid-template-columns: 1fr; }
@@ -575,41 +681,52 @@
 </head>
 <body>
 
-<!-- ============ TOP BAR ============ -->
-<div class="topbar">
-  <div class="topbar-left">
-    <a href="#shop">Shop All</a>
-    <a href="#story">Our Story</a>
+<a id="top"></a>
+<!-- ============ MASTHEAD (one continuous dark header) ============ -->
+<header class="masthead">
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="#shop">Shop All</a>
+      <a href="/story.html">Our Story</a>
+      <a href="/journal.html">Journal</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="topbar-right">
+      <button id="searchBtn" aria-label="Search products">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        Search
+      </button>
+      <button id="accountBtn" aria-label="Account">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M7 18.5c1-2.5 3-4 5-4s4 1.5 5 4M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/></svg>
+        Account
+      </button>
+      <button id="bagBtn" aria-label="Bag">
+        <svg class="icon icon-bag" viewBox="0 0 24 24"><path d="M5 7h14l-1 13H6L5 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
+        Bag (<span id="bagCount">0</span>)
+      </button>
+    </div>
   </div>
-  <a href="#" class="brand" aria-label="Unfiltered">
-    <span class="un">Un</span><span class="filtered">filtered</span><sup>&#9678;</sup>
-  </a>
-  <div class="topbar-right">
-    <button>
-      <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      Search
-    </button>
-    <button>
-      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
-      Account
-    </button>
-    <button>
-      <svg class="icon icon-bag" viewBox="0 0 24 24"><path d="M5 7h14l-1 13H6L5 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
-      Bag (0)
-    </button>
-  </div>
-</div>
 
-<!-- ============ SUB NAV ============ -->
-<nav class="subnav">
-  <a href="#" class="active">Shop the Shots</a>
-  <a href="#">Glow</a>
-  <a href="#">Immunity</a>
-  <a href="#">Subscribe &amp; Save</a>
-  <a href="#">The Story</a>
-  <a href="#">Journal</a>
-  <a href="#">FAQ</a>
-</nav>
+  <div class="brand-row">
+    <a href="#top" class="brand" aria-label="Unfiltered home">
+      <img src="assets/logo.png" alt="Unfiltered" class="brand-logo"
+           onerror="this.remove();this.nextElementSibling.style.display='inline-flex';" />
+      <span class="brand-text" style="display:none;align-items:baseline;">
+        <span class="brand-un">Un</span><span class="brand-filtered">filtered</span>
+      </span>
+    </a>
+  </div>
+
+  <nav class="subnav">
+    <a href="#shop" class="active">Shop the Shots</a>
+    <a href="#shop" data-jump-sku="glow">Glow</a>
+    <a href="#shop" data-jump-sku="immunity">Immunity</a>
+    <a href="/subscribe.html">Subscribe &amp; Save</a>
+    <a href="/story.html">The Story</a>
+    <a href="/journal.html">Journal</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+</header>
 
 <!-- ============ HERO ============ -->
 <section class="hero">
@@ -652,6 +769,7 @@
     <article class="product" data-sku="glow">
       <div class="product-art glow">
         <span class="badge bestseller">Bestseller</span>
+        <span class="stock-badge"></span>
         <img src="assets/glow.jpg" alt="Unfiltered Glow bottle" loading="lazy">
       </div>
       <div class="product-info">
@@ -685,6 +803,7 @@
     <article class="product" data-sku="immunity">
       <div class="product-art imm">
         <span class="badge new">New</span>
+        <span class="stock-badge"></span>
         <img src="assets/immunity.jpg" alt="Unfiltered Immunity Boost bottle" loading="lazy">
       </div>
       <div class="product-info">
@@ -718,6 +837,7 @@
     <article class="product" data-sku="citrus">
       <div class="product-art citrus">
         <span class="badge returns">Returns</span>
+        <span class="stock-badge"></span>
         <img src="assets/citrus.jpg" alt="Unfiltered Citrus Fire bottle" loading="lazy">
       </div>
       <div class="product-info">
@@ -751,6 +871,7 @@
     <article class="product" data-sku="reset">
       <div class="product-art reset">
         <span class="badge limited">Limited</span>
+        <span class="stock-badge"></span>
         <img src="assets/reset.jpg" alt="Unfiltered Reset bottle" loading="lazy">
       </div>
       <div class="product-info">
@@ -799,7 +920,7 @@
 </section>
 
 <!-- ============ STORIES ============ -->
-<section class="stories">
+<section class="stories" id="stories">
   <h2 class="section-title">Stories from <em>the press</em>.</h2>
   <div class="story-grid">
     <article class="story">
@@ -808,7 +929,7 @@
         <div class="story-tag">Glow</div>
         <h3 class="story-title">Why turmeric works (and why most wellness shots fake it).</h3>
         <p>Turmeric needs black pepper to absorb. Here's why every Unfiltered shot has it — and most don't.</p>
-        <a href="#" class="read-more">Read more →</a>
+        <a href="/journal/turmeric-works.html" class="read-more">Read more →</a>
       </div>
     </article>
 
@@ -818,7 +939,7 @@
         <div class="story-tag">Immunity</div>
         <h3 class="story-title">The 7-day ginger experiment.</h3>
         <p>What happens when you take a real ginger shot every morning for a week. We tested it on the team.</p>
-        <a href="#" class="read-more">Read more →</a>
+        <a href="/journal/ginger-experiment.html" class="read-more">Read more →</a>
       </div>
     </article>
 
@@ -828,9 +949,22 @@
         <div class="story-tag">Ritual</div>
         <h3 class="story-title">How to build a wellness habit that actually sticks.</h3>
         <p>Most morning routines collapse by week two. Here's the rule we use to make ours last.</p>
-        <a href="#" class="read-more">Read more →</a>
+        <a href="/journal/wellness-habit.html" class="read-more">Read more →</a>
       </div>
     </article>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq">
+  <div class="section-label">Frequently asked</div>
+  <h2 class="section-title">Honest <em>answers</em>.</h2>
+  <div class="faq">
+    <details><summary>How are they shipped?</summary><p>Cold-packed via 1–2 day carrier. We press, bottle, and ship the morning your order goes out.</p></details>
+    <details><summary>How long do shots last?</summary><p>14 days refrigerated. Freeze any you won't drink in the first week — they thaw fine.</p></details>
+    <details><summary>Can I skip or cancel a subscription?</summary><p>Anytime, from your Account. Click the Account button up top to manage your plan.</p></details>
+    <details><summary>What if my package arrives warm?</summary><p>Email <a href="mailto:hello@unfiltered.shop">hello@unfiltered.shop</a> within 48 hours — we'll replace or refund, no questions.</p></details>
+    <details><summary>Do you ship outside the US?</summary><p>Not yet. We ship to the lower 48 only while we scale cold logistics.</p></details>
   </div>
 </section>
 
@@ -838,7 +972,7 @@
 <footer class="footer">
   <div class="footer-grid">
     <div>
-      <div class="footer-brand"><span class="un">Un</span><span class="filtered">filtered</span></div>
+      <div class="footer-brand"><span class="brand-un">Un</span><span class="brand-filtered">filtered</span></div>
       <p class="footer-tag">Pressed in Brooklyn.<br/>Shipped on ice.<br/>Real ingredients. No filter.</p>
     </div>
     <div>
@@ -872,6 +1006,31 @@
   </div>
 </footer>
 
+<!-- ============ SEARCH OVERLAY ============ -->
+<div class="util-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-label="Search">
+  <div class="util-panel">
+    <button class="util-close" data-util-close>&times;</button>
+    <h3>Search the <em>shots</em></h3>
+    <input id="searchInput" type="search" placeholder="Try 'turmeric' or 'glow'..." autocomplete="off" />
+    <div class="util-empty" id="searchEmpty"></div>
+  </div>
+</div>
+
+<!-- ============ ACCOUNT OVERLAY ============ -->
+<div class="util-overlay" id="accountOverlay" role="dialog" aria-modal="true" aria-label="Account">
+  <div class="util-panel">
+    <button class="util-close" data-util-close>&times;</button>
+    <h3>Your <em>account</em></h3>
+    <p style="color:var(--ink-2);font-size:15px;margin-bottom:18px;">
+      Manage your subscription, update card, change shipping address, or cancel anytime through our secure billing portal.
+    </p>
+    <a id="portalLink" class="btn" style="display:block;text-align:center;" href="#">Open billing portal</a>
+    <p style="color:var(--muted);font-size:13px;margin-top:18px;">
+      Need help? Email <a href="mailto:hello@unfiltered.shop" style="color:var(--orange);text-decoration:underline;">hello@unfiltered.shop</a>.
+    </p>
+  </div>
+</div>
+
 <!-- ============ CHECKOUT MODAL (Stripe Embedded Checkout — no redirect) ============ -->
 <div class="checkout-overlay" id="checkoutOverlay" role="dialog" aria-modal="true" aria-label="Checkout">
   <div class="checkout-modal">
@@ -899,6 +1058,25 @@
   var PACK_LABEL = { '6': '6-pack', '12': '12-pack', '24': '24-pack' };
 
   function money(cents) { return '$' + (cents / 100).toFixed(2); }
+
+  // --- Stock status (badges + sold-out) ---
+  fetch('/api/stock').then(function (r) { return r.ok ? r.json() : null; }).then(function (snap) {
+    if (!snap) return;
+    document.querySelectorAll('.product').forEach(function (card) {
+      var sku = card.getAttribute('data-sku');
+      var s = snap[sku]; if (!s) return;
+      var badge = card.querySelector('.stock-badge');
+      if (s.status === 'sold_out') {
+        card.classList.add('sold-out');
+        badge.className = 'stock-badge sold_out';
+        badge.textContent = 'Sold Out';
+        var btn = card.querySelector('.buy-btn'); if (btn) btn.textContent = 'Sold Out';
+      } else if (s.status === 'low') {
+        badge.className = 'stock-badge low';
+        badge.textContent = 'Only ' + s.stock + ' left';
+      }
+    });
+  }).catch(function () {});
 
   // --- Live price on each product card ---
   document.querySelectorAll('.product').forEach(function (card) {
@@ -994,6 +1172,108 @@
   closeBtn.addEventListener('click', closeCheckout);
   overlay.addEventListener('click', function (e) { if (e.target === overlay) closeCheckout(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('open')) closeCheckout(); });
+
+  // --- Utility overlays (Search + Account) ---
+  function openOverlay(el) {
+    document.querySelectorAll('.util-overlay.open').forEach(function (o) { o.classList.remove('open'); });
+    el.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    var input = el.querySelector('input'); if (input) setTimeout(function () { input.focus(); }, 50);
+  }
+  function closeAllUtil() {
+    document.querySelectorAll('.util-overlay.open').forEach(function (o) { o.classList.remove('open'); });
+    if (!overlay.classList.contains('open')) document.body.style.overflow = '';
+  }
+  document.querySelectorAll('[data-util-close]').forEach(function (b) { b.addEventListener('click', closeAllUtil); });
+  document.querySelectorAll('.util-overlay').forEach(function (o) {
+    o.addEventListener('click', function (e) { if (e.target === o) closeAllUtil(); });
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAllUtil(); });
+
+  // Search button -> overlay with live filter of the 4 product cards by name + ingredients
+  document.getElementById('searchBtn').addEventListener('click', function () {
+    openOverlay(document.getElementById('searchOverlay'));
+    document.getElementById('searchInput').value = '';
+    runSearch('');
+  });
+  function runSearch(q) {
+    q = q.trim().toLowerCase();
+    var any = false;
+    document.querySelectorAll('.product').forEach(function (card) {
+      var hay = card.textContent.toLowerCase();
+      var match = !q || hay.indexOf(q) !== -1;
+      card.classList.toggle('search-hidden', !match);
+      if (match) any = true;
+    });
+    document.getElementById('searchEmpty').textContent = q
+      ? (any ? 'Filtering the shop below — close to see all.' : 'No matches. Try "ginger", "beet", or "glow".')
+      : 'Start typing to filter the shop.';
+  }
+  document.getElementById('searchInput').addEventListener('input', function (e) { runSearch(e.target.value); });
+  document.getElementById('searchOverlay').addEventListener('click', function (e) {
+    // If user clicked the dimmed area outside the panel, also clear filters
+    if (e.target.id === 'searchOverlay') { runSearch(''); }
+  });
+
+  // Account button -> billing portal link if configured, fallback to email
+  document.getElementById('accountBtn').addEventListener('click', function () {
+    fetch('/api/config').then(function (r) { return r.json(); }).then(function (cfg) {
+      var portal = cfg.portalUrl || 'mailto:hello@unfiltered.shop?subject=Account%20help';
+      document.getElementById('portalLink').setAttribute('href', portal);
+      openOverlay(document.getElementById('accountOverlay'));
+    });
+  });
+
+  // Bag button -> bag count tracks completed purchases this session (localStorage).
+  // Click scrolls to shop so the user can buy another.
+  function bagCount() {
+    try { return (JSON.parse(localStorage.getItem('unfiltered_bag') || '[]')).length; } catch { return 0; }
+  }
+  function refreshBag() { document.getElementById('bagCount').textContent = bagCount(); }
+  refreshBag();
+  document.getElementById('bagBtn').addEventListener('click', function () {
+    closeAllUtil();
+    document.getElementById('shop').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // Subnav: "Glow" / "Immunity" -> scroll AND highlight that card
+  document.querySelectorAll('.subnav a[data-jump-sku]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var sku = link.getAttribute('data-jump-sku');
+      var card = document.querySelector('.product[data-sku="' + sku + '"]');
+      if (card) {
+        e.preventDefault();
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.animate(
+          [{ boxShadow: '0 0 0 0 rgba(183,62,26,0)' }, { boxShadow: '0 0 0 6px rgba(183,62,26,0.35)' }, { boxShadow: '0 0 0 0 rgba(183,62,26,0)' }],
+          { duration: 1200 }
+        );
+      }
+    });
+  });
+
+  // Subnav: "Subscribe & Save" -> set all plan dropdowns to biweekly and scroll to shop
+  document.querySelectorAll('.subnav a[data-subscribe]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.querySelectorAll('.product .opt-plan').forEach(function (sel) {
+        sel.value = 'biweekly';
+        sel.dispatchEvent(new Event('change'));
+      });
+      document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // Bump bag count after a successful checkout so the icon feels alive.
+  window.addEventListener('storage', refreshBag);
+
+  // Sticky masthead: shrink the logo 15% once we leave the very top.
+  var masthead = document.querySelector('.masthead');
+  function onScroll() {
+    masthead.classList.toggle('scrolled', window.scrollY > 24);
+  }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 })();
 </script>
 
