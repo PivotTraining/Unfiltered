@@ -68,27 +68,21 @@
   .topbar a:hover, .topbar button:hover { color: var(--orange); }
 
   .brand {
+    display: inline-flex; align-items: center;
+    line-height: 1;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .brand-logo { height: 38px; width: auto; display: block; }
+  .brand-fallback {
+    display: none; /* shown only if logo.svg fails to load */
     font-family: 'Cormorant Garamond', serif;
     font-size: 38px;
+    font-weight: 500;
     letter-spacing: -0.01em;
-    text-transform: none;
-    line-height: 1;
-    position: relative;
-    padding-right: 14px;
-    color: var(--ink);
-    font-weight: 500;
   }
-  .brand .un { font-style: normal; }
-  .brand .filtered { font-style: italic; }
-  .brand sup {
-    font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    font-weight: 500;
-    position: absolute;
-    top: 6px;
-    right: 0;
-    letter-spacing: 0;
-  }
+  .brand-fallback .un { font-style: normal; }
+  .brand-fallback .filtered { font-style: italic; }
 
   .icon { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.6; }
   .icon-bag { width: 16px; height: 16px; }
@@ -369,6 +363,70 @@
   .product.sold-out .buy-btn { opacity: 0.4; pointer-events: none; }
   .product.sold-out .product-options { opacity: 0.5; pointer-events: none; }
 
+  /* ---------- FAQ ---------- */
+  .faq { max-width: 760px; margin: 0 auto; }
+  .faq details {
+    border-top: 1px solid var(--line);
+    padding: 22px 0;
+  }
+  .faq details:last-child { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    list-style: none; cursor: pointer;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500; font-size: 22px; letter-spacing: -0.005em;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after {
+    content: '+'; font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 300;
+    color: var(--orange); transition: transform .2s ease;
+  }
+  .faq details[open] summary::after { content: '–'; }
+  .faq p { color: var(--ink-2); margin-top: 12px; font-size: 15.5px; line-height: 1.65; }
+  .faq a { color: var(--orange); text-decoration: underline; }
+
+  /* ---------- Topbar utility modals (Search / Account) ---------- */
+  .util-overlay {
+    position: fixed; inset: 0; z-index: 900;
+    background: rgba(18,12,6,0.45);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: none; align-items: flex-start; justify-content: center;
+    padding: 80px 20px 20px;
+  }
+  .util-overlay.open { display: flex; }
+  .util-panel {
+    background: var(--cream-2); width: 100%; max-width: 520px;
+    border-radius: 8px; box-shadow: 0 30px 60px -20px rgba(24,17,9,0.4);
+    padding: 26px;
+  }
+  .util-panel h3 {
+    font-family: 'Cormorant Garamond', serif; font-weight: 500;
+    font-size: 28px; letter-spacing: -0.005em; margin-bottom: 16px;
+  }
+  .util-panel h3 em { color: var(--orange); font-style: italic; }
+  .util-panel input {
+    width: 100%; padding: 14px 16px; font: inherit; font-size: 15px;
+    background: transparent; color: var(--ink);
+    border: 1.5px solid var(--line); border-radius: 0; outline: none;
+    transition: border-color .15s ease;
+  }
+  .util-panel input:focus { border-color: var(--ink); }
+  .util-results { margin-top: 18px; }
+  .util-results a {
+    display: block; padding: 12px 0;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .util-results a:hover { color: var(--orange); }
+  .util-empty { color: var(--muted); font-size: 14px; margin-top: 14px; }
+  .util-close {
+    float: right; width: 32px; height: 32px; border-radius: 50%;
+    border: 1.5px solid var(--line); font-size: 16px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .util-close:hover { border-color: var(--ink); }
+  .product.search-hidden { display: none; }
+
   /* ---------- Checkout Modal ---------- */
   .checkout-overlay {
     position: fixed; inset: 0; z-index: 1000;
@@ -591,36 +649,44 @@
 <div class="topbar">
   <div class="topbar-left">
     <a href="#shop">Shop All</a>
-    <a href="#story">Our Story</a>
+    <a href="#stories">Our Story</a>
+    <a href="#faq">FAQ</a>
   </div>
-  <a href="#" class="brand" aria-label="Unfiltered">
-    <span class="un">Un</span><span class="filtered">filtered</span><sup>&#9678;</sup>
+  <a href="#top" class="brand" aria-label="Unfiltered home">
+    <!-- Drop your logo file at /assets/logo.svg (or .png) — width ~120px, dark on transparent.
+         If the file is missing, we fall back to a styled wordmark so the site never breaks. -->
+    <img src="assets/logo.png" alt="Unfiltered Skincare" class="brand-logo"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex';" />
+    <span class="brand-fallback">
+      <span class="un">Un</span><span class="filtered">filtered</span>
+    </span>
   </a>
   <div class="topbar-right">
-    <button>
+    <button id="searchBtn" aria-label="Search products">
       <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       Search
     </button>
-    <button>
-      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
+    <button id="accountBtn" aria-label="Account">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M7 18.5c1-2.5 3-4 5-4s4 1.5 5 4M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/></svg>
       Account
     </button>
-    <button>
+    <button id="bagBtn" aria-label="Bag">
       <svg class="icon icon-bag" viewBox="0 0 24 24"><path d="M5 7h14l-1 13H6L5 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
-      Bag (0)
+      Bag (<span id="bagCount">0</span>)
     </button>
   </div>
 </div>
+<a id="top"></a>
 
 <!-- ============ SUB NAV ============ -->
 <nav class="subnav">
-  <a href="#" class="active">Shop the Shots</a>
-  <a href="#">Glow</a>
-  <a href="#">Immunity</a>
-  <a href="#">Subscribe &amp; Save</a>
-  <a href="#">The Story</a>
-  <a href="#">Journal</a>
-  <a href="#">FAQ</a>
+  <a href="#shop" class="active">Shop the Shots</a>
+  <a href="#shop" data-jump-sku="glow">Glow</a>
+  <a href="#shop" data-jump-sku="immunity">Immunity</a>
+  <a href="#shop" data-subscribe>Subscribe &amp; Save</a>
+  <a href="#stories">The Story</a>
+  <a href="#stories">Journal</a>
+  <a href="#faq">FAQ</a>
 </nav>
 
 <!-- ============ HERO ============ -->
@@ -815,7 +881,7 @@
 </section>
 
 <!-- ============ STORIES ============ -->
-<section class="stories">
+<section class="stories" id="stories">
   <h2 class="section-title">Stories from <em>the press</em>.</h2>
   <div class="story-grid">
     <article class="story">
@@ -847,6 +913,19 @@
         <a href="#" class="read-more">Read more →</a>
       </div>
     </article>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq">
+  <div class="section-label">Frequently asked</div>
+  <h2 class="section-title">Honest <em>answers</em>.</h2>
+  <div class="faq">
+    <details><summary>How are they shipped?</summary><p>Cold-packed via 1–2 day carrier. We press, bottle, and ship the morning your order goes out.</p></details>
+    <details><summary>How long do shots last?</summary><p>14 days refrigerated. Freeze any you won't drink in the first week — they thaw fine.</p></details>
+    <details><summary>Can I skip or cancel a subscription?</summary><p>Anytime, from your Account. Click the Account button up top to manage your plan.</p></details>
+    <details><summary>What if my package arrives warm?</summary><p>Email <a href="mailto:hello@unfiltered.shop">hello@unfiltered.shop</a> within 48 hours — we'll replace or refund, no questions.</p></details>
+    <details><summary>Do you ship outside the US?</summary><p>Not yet. We ship to the lower 48 only while we scale cold logistics.</p></details>
   </div>
 </section>
 
@@ -887,6 +966,31 @@
     </div>
   </div>
 </footer>
+
+<!-- ============ SEARCH OVERLAY ============ -->
+<div class="util-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-label="Search">
+  <div class="util-panel">
+    <button class="util-close" data-util-close>&times;</button>
+    <h3>Search the <em>shots</em></h3>
+    <input id="searchInput" type="search" placeholder="Try 'turmeric' or 'glow'..." autocomplete="off" />
+    <div class="util-empty" id="searchEmpty"></div>
+  </div>
+</div>
+
+<!-- ============ ACCOUNT OVERLAY ============ -->
+<div class="util-overlay" id="accountOverlay" role="dialog" aria-modal="true" aria-label="Account">
+  <div class="util-panel">
+    <button class="util-close" data-util-close>&times;</button>
+    <h3>Your <em>account</em></h3>
+    <p style="color:var(--ink-2);font-size:15px;margin-bottom:18px;">
+      Manage your subscription, update card, change shipping address, or cancel anytime through our secure billing portal.
+    </p>
+    <a id="portalLink" class="btn" style="display:block;text-align:center;" href="#">Open billing portal</a>
+    <p style="color:var(--muted);font-size:13px;margin-top:18px;">
+      Need help? Email <a href="mailto:hello@unfiltered.shop" style="color:var(--orange);text-decoration:underline;">hello@unfiltered.shop</a>.
+    </p>
+  </div>
+</div>
 
 <!-- ============ CHECKOUT MODAL (Stripe Embedded Checkout — no redirect) ============ -->
 <div class="checkout-overlay" id="checkoutOverlay" role="dialog" aria-modal="true" aria-label="Checkout">
@@ -1029,6 +1133,100 @@
   closeBtn.addEventListener('click', closeCheckout);
   overlay.addEventListener('click', function (e) { if (e.target === overlay) closeCheckout(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('open')) closeCheckout(); });
+
+  // --- Utility overlays (Search + Account) ---
+  function openOverlay(el) {
+    document.querySelectorAll('.util-overlay.open').forEach(function (o) { o.classList.remove('open'); });
+    el.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    var input = el.querySelector('input'); if (input) setTimeout(function () { input.focus(); }, 50);
+  }
+  function closeAllUtil() {
+    document.querySelectorAll('.util-overlay.open').forEach(function (o) { o.classList.remove('open'); });
+    if (!overlay.classList.contains('open')) document.body.style.overflow = '';
+  }
+  document.querySelectorAll('[data-util-close]').forEach(function (b) { b.addEventListener('click', closeAllUtil); });
+  document.querySelectorAll('.util-overlay').forEach(function (o) {
+    o.addEventListener('click', function (e) { if (e.target === o) closeAllUtil(); });
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAllUtil(); });
+
+  // Search button -> overlay with live filter of the 4 product cards by name + ingredients
+  document.getElementById('searchBtn').addEventListener('click', function () {
+    openOverlay(document.getElementById('searchOverlay'));
+    document.getElementById('searchInput').value = '';
+    runSearch('');
+  });
+  function runSearch(q) {
+    q = q.trim().toLowerCase();
+    var any = false;
+    document.querySelectorAll('.product').forEach(function (card) {
+      var hay = card.textContent.toLowerCase();
+      var match = !q || hay.indexOf(q) !== -1;
+      card.classList.toggle('search-hidden', !match);
+      if (match) any = true;
+    });
+    document.getElementById('searchEmpty').textContent = q
+      ? (any ? 'Filtering the shop below — close to see all.' : 'No matches. Try "ginger", "beet", or "glow".')
+      : 'Start typing to filter the shop.';
+  }
+  document.getElementById('searchInput').addEventListener('input', function (e) { runSearch(e.target.value); });
+  document.getElementById('searchOverlay').addEventListener('click', function (e) {
+    // If user clicked the dimmed area outside the panel, also clear filters
+    if (e.target.id === 'searchOverlay') { runSearch(''); }
+  });
+
+  // Account button -> billing portal link if configured, fallback to email
+  document.getElementById('accountBtn').addEventListener('click', function () {
+    fetch('/api/config').then(function (r) { return r.json(); }).then(function (cfg) {
+      var portal = cfg.portalUrl || 'mailto:hello@unfiltered.shop?subject=Account%20help';
+      document.getElementById('portalLink').setAttribute('href', portal);
+      openOverlay(document.getElementById('accountOverlay'));
+    });
+  });
+
+  // Bag button -> bag count tracks completed purchases this session (localStorage).
+  // Click scrolls to shop so the user can buy another.
+  function bagCount() {
+    try { return (JSON.parse(localStorage.getItem('unfiltered_bag') || '[]')).length; } catch { return 0; }
+  }
+  function refreshBag() { document.getElementById('bagCount').textContent = bagCount(); }
+  refreshBag();
+  document.getElementById('bagBtn').addEventListener('click', function () {
+    closeAllUtil();
+    document.getElementById('shop').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // Subnav: "Glow" / "Immunity" -> scroll AND highlight that card
+  document.querySelectorAll('.subnav a[data-jump-sku]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var sku = link.getAttribute('data-jump-sku');
+      var card = document.querySelector('.product[data-sku="' + sku + '"]');
+      if (card) {
+        e.preventDefault();
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.animate(
+          [{ boxShadow: '0 0 0 0 rgba(183,62,26,0)' }, { boxShadow: '0 0 0 6px rgba(183,62,26,0.35)' }, { boxShadow: '0 0 0 0 rgba(183,62,26,0)' }],
+          { duration: 1200 }
+        );
+      }
+    });
+  });
+
+  // Subnav: "Subscribe & Save" -> set all plan dropdowns to biweekly and scroll to shop
+  document.querySelectorAll('.subnav a[data-subscribe]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.querySelectorAll('.product .opt-plan').forEach(function (sel) {
+        sel.value = 'biweekly';
+        sel.dispatchEvent(new Event('change'));
+      });
+      document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // Bump bag count after a successful checkout so the icon feels alive.
+  window.addEventListener('storage', refreshBag);
 })();
 </script>
 
