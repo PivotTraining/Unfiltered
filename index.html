@@ -47,10 +47,18 @@
   img, svg { display: block; max-width: 100%; }
 
   /* ---------- Masthead (single dark header: utility row + big logo + subnav) ----------
-     Background is pure black so the logo PNG's black canvas blends invisibly. */
+     Background is pure black so the logo PNG's black canvas blends invisibly.
+     Sticks to the top as we scroll; logo shrinks by 15% once we leave the very top. */
   .masthead {
     background: #000;
     color: var(--cream);
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    transition: padding .25s ease;
+  }
+  .masthead .brand-row {
+    transition: padding .25s ease;
   }
   .topbar {
     display: grid;
@@ -87,13 +95,17 @@
   }
   /* Fluid logo size: 120px on small phones up to 240px on desktop, no breakpoint jumps.
      mix-blend-mode: lighten erases any residual non-pure-black pixels in the PNG so the
-     edges blend into the masthead regardless of small color drift. */
+     edges blend into the masthead regardless of small color drift. Once the masthead
+     gains the .scrolled class, the logo eases to 85% of its natural height. */
   .brand-logo {
     height: clamp(120px, 18vw, 240px);
     width: auto;
     display: block;
     mix-blend-mode: lighten;
+    transition: height .25s ease;
   }
+  .masthead.scrolled .brand-logo { height: clamp(102px, 15.3vw, 204px); }
+  .masthead.scrolled .brand-row { padding-top: 4px; padding-bottom: 10px; }
   .brand-un {
     font-family: 'Allura', cursive;
     font-size: 52px; font-weight: 400;
@@ -1253,6 +1265,14 @@
 
   // Bump bag count after a successful checkout so the icon feels alive.
   window.addEventListener('storage', refreshBag);
+
+  // Sticky masthead: shrink the logo 15% once we leave the very top.
+  var masthead = document.querySelector('.masthead');
+  function onScroll() {
+    masthead.classList.toggle('scrolled', window.scrollY > 24);
+  }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 })();
 </script>
 
