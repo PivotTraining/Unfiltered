@@ -2,7 +2,8 @@
 // The browser mounts the embedded checkout with that secret — payment happens
 // on-page, no redirect to stripe.com.
 const Stripe = require('stripe');
-const { resolveSelection } = require('./_catalog');
+const { resolveSelection, resolveCleanse } = require('./_catalog');
+const { getStock } = require('./_inventory');
 
 function getBaseUrl(req) {
   if (process.env.PUBLIC_BASE_URL) return process.env.PUBLIC_BASE_URL.replace(/\/$/, '');
@@ -22,6 +23,12 @@ async function readJson(req) {
   });
 }
 
+// Optional: only enable Stripe Tax / shipping rates if you've configured them
+// in the Stripe dashboard. Toggle via env vars so this works for everyone.
+const TAX_ENABLED = process.env.STRIPE_TAX_ENABLED === 'true';
+const SHIPPING_RATES = (process.env.STRIPE_SHIPPING_RATES || '')
+  .split(',').map(s => s.trim()).filter(Boolean); // e.g. "shr_123,shr_456"
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -32,20 +39,40 @@ module.exports = async (req, res) => {
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const { sku, pack, plan } = await readJson(req);
+  const body = await readJson(req);
+  const { sku, pack, plan, cleanse } = body;
 
-  const resolved = resolveSelection({ sku, pack, plan });
+  // Two purchase types: a juice selection, or a cleanse program.
+  const resolved = cleanse ? resolveCleanse({ cleanse }) : resolveSelection({ sku, pack, plan });
   if (!resolved) return res.status(400).json({ error: 'Invalid product selection.' });
 
+  // Inventory gate for individual juices (skipped for cleanse bundles, which
+  // draw from mixed stock). Silently passes if Supabase isn't configured.
+  if (!cleanse) {
+    const available = await getStock(sku);
+    if (available < resolved.bottles) {
+      return res.status(409).json({ error: `Only ${available} bottles of ${resolved.productName} left — pick a smaller size.` });
+    }
+  }
+
   try {
-    const session = await stripe.checkout.sessions.create({
+    const params = {
       ui_mode: 'embedded',
       mode: resolved.mode,
       line_items: [resolved.line_item],
-      automatic_tax: { enabled: false },
       shipping_address_collection: { allowed_countries: ['US'] },
       return_url: `${getBaseUrl(req)}/return.html?session_id={CHECKOUT_SESSION_ID}`,
-    });
+      metadata: cleanse ? { cleanse, bottles: String(resolved.bottles) } : { sku, pack, plan, bottles: String(resolved.bottles) },
+    };
+
+    if (TAX_ENABLED) params.automatic_tax = { enabled: true };
+    if (SHIPPING_RATES.length && resolved.mode === 'payment') {
+      // Stripe shipping_options only apply to one-time mode. Subscriptions
+      // bake shipping into the recurring price instead.
+      params.shipping_options = SHIPPING_RATES.map((id) => ({ shipping_rate: id }));
+    }
+
+    const session = await stripe.checkout.sessions.create(params);
     return res.status(200).json({ clientSecret: session.client_secret });
   } catch (err) {
     return res.status(500).json({ error: err.message });
