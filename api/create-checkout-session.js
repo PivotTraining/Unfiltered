@@ -2,7 +2,7 @@
 // The browser mounts the embedded checkout with that secret — payment happens
 // on-page, no redirect to stripe.com.
 const Stripe = require('stripe');
-const { resolveSelection } = require('./_catalog');
+const { resolveSelection, resolveCleanse } = require('./_catalog');
 const { getStock } = require('./_inventory');
 
 function getBaseUrl(req) {
@@ -39,16 +39,20 @@ module.exports = async (req, res) => {
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const { sku, pack, plan } = await readJson(req);
+  const body = await readJson(req);
+  const { sku, pack, plan, cleanse } = body;
 
-  const resolved = resolveSelection({ sku, pack, plan });
+  // Two purchase types: a juice selection, or a cleanse program.
+  const resolved = cleanse ? resolveCleanse({ cleanse }) : resolveSelection({ sku, pack, plan });
   if (!resolved) return res.status(400).json({ error: 'Invalid product selection.' });
 
-  // Inventory gate. Skipped silently if Supabase isn't configured (stock comes
-  // back from the catalog default and is high enough), so checkout still works.
-  const available = await getStock(sku);
-  if (available < resolved.bottles) {
-    return res.status(409).json({ error: `Only ${available} bottles of ${resolved.productName} left — pick a smaller pack.` });
+  // Inventory gate for individual juices (skipped for cleanse bundles, which
+  // draw from mixed stock). Silently passes if Supabase isn't configured.
+  if (!cleanse) {
+    const available = await getStock(sku);
+    if (available < resolved.bottles) {
+      return res.status(409).json({ error: `Only ${available} bottles of ${resolved.productName} left — pick a smaller size.` });
+    }
   }
 
   try {
@@ -58,7 +62,7 @@ module.exports = async (req, res) => {
       line_items: [resolved.line_item],
       shipping_address_collection: { allowed_countries: ['US'] },
       return_url: `${getBaseUrl(req)}/return.html?session_id={CHECKOUT_SESSION_ID}`,
-      metadata: { sku, pack, plan, bottles: String(resolved.bottles) },
+      metadata: cleanse ? { cleanse, bottles: String(resolved.bottles) } : { sku, pack, plan, bottles: String(resolved.bottles) },
     };
 
     if (TAX_ENABLED) params.automatic_tax = { enabled: true };
