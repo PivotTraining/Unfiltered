@@ -1,0 +1,29 @@
+<svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Revive Wellness">
+  <defs>
+    <style>
+      .ring { fill:none; stroke:#ffffff; }
+      .leaf { fill:#ffffff; }
+      .vein { stroke:#7cb342; stroke-linecap:round; fill:none; }
+      .name { font-family:'Fraunces','Cormorant Garamond',Georgia,serif; fill:#ffffff; font-weight:600; }
+      .tag  { font-family:'Inter','Helvetica Neue',Arial,sans-serif; fill:#f6f3ea; font-weight:600; }
+      .micro{ font-family:'Inter','Helvetica Neue',Arial,sans-serif; fill:#ffffff; font-weight:500; }
+    </style>
+  </defs>
+  <circle class="ring" cx="300" cy="300" r="280" stroke-width="4"/>
+  <circle class="ring" cx="300" cy="300" r="262" stroke-width="1.4"/>
+  <path id="top2" d="M 80 300 A 220 220 0 0 1 520 300" fill="none"/>
+  <path id="bot2" d="M 96 300 A 204 204 0 0 0 504 300" fill="none"/>
+  <text class="micro" font-size="26" letter-spacing="11"><textPath href="#top2" startOffset="50%" text-anchor="middle">COLD&#160;PRESSED&#160;·&#160;WITH&#160;PURPOSE</textPath></text>
+  <text class="micro" font-size="20" letter-spacing="9"><textPath href="#bot2" startOffset="50%" text-anchor="middle">RELEASE&#160;·&#160;REFRESH&#160;·&#160;REVIVE</textPath></text>
+  <circle cx="300" cy="58" r="4" fill="#f6f3ea"/>
+  <circle cx="300" cy="542" r="4" fill="#f6f3ea"/>
+  <g transform="translate(300 205)">
+    <path class="leaf" d="M0 -55 C-34 -22 -34 38 0 70 C34 38 34 -22 0 -55 Z"/>
+    <path class="vein" stroke-width="3.4" d="M0 -42 L0 60"/>
+    <path class="vein" stroke-width="2.4" d="M0 -18 L-22 -30 M0 0 L24 -12 M0 18 L-22 6 M0 36 L24 24"/>
+  </g>
+  <text class="name" x="300" y="395" text-anchor="middle" font-size="74" letter-spacing="2">REVIVE</text>
+  <line x1="170" y1="430" x2="230" y2="430" stroke="#f6f3ea" stroke-width="2"/>
+  <line x1="370" y1="430" x2="430" y2="430" stroke="#f6f3ea" stroke-width="2"/>
+  <text class="tag" x="300" y="437" text-anchor="middle" font-size="24" letter-spacing="13">WELLNESS</text>
+</svg>
