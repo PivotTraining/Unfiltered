@@ -60,7 +60,6 @@ function Masthead({ bag, onNav }) {
         <a onClick={() => onNav('shop')} className="active">Shop the Juices</a>
         <a onClick={() => onNav('cleanses')}>Cleanse Programs</a>
         <a onClick={() => onNav('services')}>Wellness Services</a>
-        <a href="journal.html">Journal</a>
         <a href="community.html">Community</a>
         <a onClick={() => onNav('about')}>Our Story</a>
         <a onClick={() => onNav('collab')}>Let's Collab</a>
@@ -193,7 +192,7 @@ function App() {
             <p className="rk-footer-tag">Cold pressed with purpose.<br />Release, refresh, revive.</p>
           </div>
           <div><h4>Shop</h4><ul><li><a>Juices</a></li><li><a>Cleanse Programs</a></li><li><a>Services</a></li></ul></div>
-          <div><h4>Company</h4><ul><li><a>Our Story</a></li><li><a href="journal.html">Journal</a></li><li><a href="community.html">Revive Circle</a></li><li><a>Contact</a></li></ul></div>
+          <div><h4>Company</h4><ul><li><a>Our Story</a></li><li><a href="community.html">Revive Circle</a></li><li><a>Contact</a></li></ul></div>
           <div><h4>Legal</h4><ul><li><a>Privacy</a></li><li><a>Terms</a></li></ul></div>
         </div>
         <div className="rk-footer-legal"><span>© 2026 Revive Wellness</span><span>Where wellness meets vitality.</span></div>
